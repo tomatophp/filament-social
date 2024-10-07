@@ -10,6 +10,7 @@ Integration of social media platform actions and auth to your FilamentPHP panel
 
 ## Screenshots
 
+![Dark](https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/dark.png)
 ![Register](https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/register.png)
 ![Login](https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/register.png)
 ![Share Buttons](https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/share-buttons.png)

@@ -27,12 +27,16 @@
     },
     "authors": [
         {
-            "name": "Queen Tech",
-            "email": "git@queentechsoltions.net"
+            "name": "Fady Mondy",
+            "email": "info@3x1.io"
         }
     ],
     "require": {
-        "php": "^8.0.2",
-        "tomatophp/console-helpers": "^1.0"
+        "php": "^8.1|^8.2",
+        "filament/filament": "^3.2",
+        "mallardduck/blade-boxicons": "^2.4",
+        "tomatophp/console-helpers": "^1.1",
+        "laravel/socialite": "^5.15",
+        "revolution/socialite-discord": "^1.4"
     }
 }

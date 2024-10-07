@@ -1,0 +1,29 @@
+{
+    "name": "FilamentSocial",
+    "alias": "filament-social",
+    "description": {
+        "ar": "Integration of social media platform actions and auth to your FilamentPHP panel",
+        "en": "Integration of social media platform actions and auth to your FilamentPHP panel",
+        "gr": "Integration of social media platform actions and auth to your FilamentPHP panel",
+        "sp": "Integration of social media platform actions and auth to your FilamentPHP panel"
+    },
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "TomatoPHP\\FilamentSocial\\FilamentSocialServiceProvider"
+    ],
+    "files": [],
+    "title": {
+        "ar": "Social Media Manager",
+        "en": "Social Media Manager",
+        "gr": "Social Media Manager",
+        "sp": "Social Media Manager"
+    },
+    "color": "#007dff",
+    "icon": "heroicon-c-share",
+    "placeholder": "https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/3x1io-tomato-social.jpg",
+    "type": "plugin",
+    "version": "v1.0.0",
+    "github" : "https://github.com/tomatophp/filament-social",
+    "docs" : "https://github.com/tomatophp/filament-social"
+}

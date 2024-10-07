@@ -14,7 +14,12 @@ class SocialAuthUser extends Model
         'model_id',
         'model_type',
         'provider',
-        'provider_id'
+        'provider_id',
+        'data'
+    ];
+
+    protected $casts = [
+        'data' => 'json'
     ];
 
     public function model()

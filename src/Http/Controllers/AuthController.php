@@ -3,36 +3,51 @@
 namespace TomatoPHP\FilamentSocial\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use TomatoPHP\FilamentAccounts\Models\AccountsMeta;
 use TomatoPHP\FilamentAlerts\Services\SendNotification;
 use TomatoPHP\FilamentDiscord\Jobs\NotifyDiscordJob;
+use TomatoPHP\FilamentSocial\Events\SocialLogin;
+use TomatoPHP\FilamentSocial\Events\SocialRegister;
 
 class AuthController extends Controller
 {
-    public function provider($provider)
+    public function provider($provider, Request $request)
     {
+        $request->validate([
+            'url' => 'required|url',
+        ]);
+
+
+        $currentPanel = str($request->get('url'))->beforeLast('/')->afterLast('/');
+        session()->put('current_panel', $currentPanel);
+
         try {
             return Socialite::driver($provider)
                 ->redirect();
         }catch (\Exception $exception){
             Notification::make()
                 ->title('Error')
-                ->body('Something went wrong!')
+                ->body($exception->getMessage())
                 ->danger()
                 ->send();
 
-            return redirect()->to('app/login');
+            return redirect()->to($request->get('url'));
         }
     }
 
     public function callback($provider)
     {
+        $getFilamentPanel = Filament::getPanel(session('current_panel'));
+
         try {
             $providerHasToken = config('services.'.$provider.'.client_token');
             try {
@@ -49,91 +64,132 @@ class AuthController extends Controller
                     ->danger()
                     ->send();
 
-                return redirect()->to(app()->getLocale() . '/register');
+                return redirect()->to(config('filament-social.panel') . '/register');
             }
 
-            if(isset($socialUser->attributes['nickname'])){
-                $id = str($socialUser->attributes['nickname'])->slug('_');
-            }
-            else {
-                $id = \Str::of($socialUser->name)->slug('_')->toString();
-            }
-
-            $user = Account::query()->whereHas('accountsMetas', function ($query) use ($socialUser, $provider) {
-                $query->where('key', $provider)->where('value', $socialUser->id);
+            $getAuthModel = config('auth.providers.' . config('auth.guards.'.$getFilamentPanel->getAuthGuard().'.provider') . '.model');
+            $user = $getAuthModel::query()->whereHas('socialAuthUser', function ($query) use ($socialUser, $provider) {
+                $query->where('provider', $provider)->where('provider_id', $socialUser->id);
             })->first();
 
             if(!$user){
-                $user = Account::query()->where('email', $socialUser->email)->first();
+                $user = $getAuthModel::query()->where('email', $socialUser->email)->first();
                 if(!$user){
-                    $user = Account::create([
+                    $user = $getAuthModel::create([
                         'email' => $socialUser->email,
                         'name' => $socialUser->name,
-                        'username' => $id,
-                        'otp_activated_at' => Carbon::now(),
-                        'is_active' => true,
+                        'password' => bcrypt(Str::random(10)),
                     ]);
 
-                    $user->meta($provider, $socialUser->id);
+                    if(Schema::hasColumn($user->getTable(), 'username')){
+                        if(isset($socialUser->attributes['nickname'])){
+                            $id = str($socialUser->attributes['nickname'])->slug('_');
+                        }
+                        else {
+                            $id = Str::of($socialUser->name)->slug('_')->toString();
+                        }
 
-                    Notification::make()
-                        ->title('New TomatoPHP User')
-                        ->body(collect([
-                            'NAME: '.$user->name,
-                            'EMAIL: '.$user->email,
-                            'PHONE: '.$user->phone,
-                            'USERNAME: '.$user->username,
-                        ])->implode("\n"))
-                        ->sendToDiscord();
+                        $user->update([
+                            'username' => $id
+                        ]);
+                    }
+
+                    if(Schema::hasColumn($user->getTable(), 'profile_photo_path')){
+                        $user->update([
+                            'profile_photo_path' => $socialUser->avatar
+                        ]);
+                    }
+
+                    $user->socialAuthUser()->create([
+                        'provider' => $provider,
+                        'provider_id' => $socialUser->id,
+                        'data' => $socialUser
+                    ]);
+
+
+                    if(config('filament-social.notification.discord')){
+                        Notification::make()
+                            ->title('New User Registered')
+                            ->body(collect([
+                                'NAME: '.$user->name,
+                                'EMAIL: '.$user->email,
+                            ])->implode("\n"))
+                            ->sendToDiscord();
+                    }
+
+                    Event::dispatch(new SocialRegister($user->toArray()));
                 }
                 else {
                     $user->update([
                         'name' => $socialUser->name,
-                        'otp_activated_at' => Carbon::now(),
-                        'is_active' => true,
+                        'data' => $socialUser
                     ]);
 
-                    $user->meta($provider, $socialUser->id);
+                    if(Schema::hasColumn($user->getTable(), 'username')){
+                        if(isset($socialUser->attributes['nickname'])){
+                            $id = str($socialUser->attributes['nickname'])->slug('_');
+                        }
+                        else {
+                            $id = Str::of($socialUser->name)->slug('_')->toString();
+                        }
+
+                        $user->update([
+                            'username' => $id
+                        ]);
+                    }
+
+                    if(Schema::hasColumn($user->getTable(), 'profile_photo_path')){
+                        $user->update([
+                            'profile_photo_path' => $socialUser->avatar
+                        ]);
+                    }
+
+                    Event::dispatch(new SocialLogin($user->toArray()));
+                }
+            }
+            else {
+                $user->update([
+                    'name' => $socialUser->name,
+                    'data' => $socialUser
+                ]);
+
+                if(Schema::hasColumn($user->getTable(), 'username')){
+                    if(isset($socialUser->attributes['nickname'])){
+                        $id = str($socialUser->attributes['nickname'])->slug('_');
+                    }
+                    else {
+                        $id = Str::of($socialUser->name)->slug('_')->toString();
+                    }
+
+                    $user->update([
+                        'username' => $id
+                    ]);
+                }
+
+                if(Schema::hasColumn($user->getTable(), 'profile_photo_path')){
+                    $user->update([
+                        'profile_photo_path' => $socialUser->avatar
+                    ]);
                 }
             }
 
-
-            auth('accounts')->login($user);
+            auth($getFilamentPanel->getAuthGuard())->login($user);
 
             Notification::make()
                 ->title('Welcome '. $user->name)
-                ->body('You have successfully registered')
+                ->body('You have successfully logged in!')
                 ->success()
                 ->send();
 
-            return redirect()->to('/user');
+            return redirect()->to(config('filament-social.panel'));
         }
         catch (\Exception $exception){
-
-            if(config('filament-discord.error-webhook-active')){
-                try {
-                    dispatch(new NotifyDiscordJob([
-                        'webhook' => config('filament-discord.error-webhook'),
-                        'title' => $exception->getMessage(),
-                        'message' => collect([
-                            "File: ".$exception->getFile(),
-                            "Line: ".$exception->getLine(),
-                            "Time: ".\Carbon\Carbon::now()->toDateTimeString(),
-                            "Trace: ```".str($exception->getTraceAsString())->limit(2500) ."```",
-                        ])->implode("\n"),
-                        'url' => url()->current()
-                    ]));
-                }catch (\Exception $exception){
-                    // do nothing
-                }
-            }
-
             Notification::make()
                 ->title('Error')
                 ->body('Something went wrong!')
                 ->danger()
                 ->send();
-            return redirect()->to('/');
+            return redirect()->to(config('filament-social.panel'));
         }
     }
 }

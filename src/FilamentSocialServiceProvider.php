@@ -2,7 +2,9 @@
 
 namespace TomatoPHP\FilamentSocial;
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use TomatoPHP\FilamentSocial\Views\Components\SocialShare;
 
 
 class FilamentSocialServiceProvider extends ServiceProvider
@@ -48,10 +50,24 @@ class FilamentSocialServiceProvider extends ServiceProvider
         //Register Routes
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 
+        $this->loadViewComponentsAs('filament', [
+            SocialShare::class
+        ]);
+
     }
 
     public function boot(): void
     {
-        //you boot methods here
+        Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
+            $event->extendSocialite('facebook', \SocialiteProviders\Facebook\Provider::class);
+        });
+
+        Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
+            $event->extendSocialite('tiktok', \SocialiteProviders\TikTok\Provider::class);
+        });
+
+        Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
+            $event->extendSocialite('snapchat', \SocialiteProviders\Snapchat\Provider::class);
+        });
     }
 }

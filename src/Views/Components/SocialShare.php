@@ -11,7 +11,19 @@ class SocialShare extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct(
+        public bool $inline = false,
+        public bool $facebook = false,
+        public bool $twitter = false,
+        public bool $reddit = false,
+        public bool $pinterest = false,
+        public bool $linkedin = false,
+        public bool $whatsapp = false,
+        public bool $telegram = false,
+        public bool $mail = false,
+        public bool $copy = false,
+        public bool $print = false,
+    )
     {
         //
     }

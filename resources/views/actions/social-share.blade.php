@@ -1,3 +1,17 @@
+@php
+    $inline= $isInline();
+    $facebook = $isFacebook();
+    $twitter = $isTwitter();
+    $reddit = $isReddit();
+    $pinterest = $isPinterest();
+    $linkedin = $isLinkedin();
+    $telegram = $isTelegram();
+    $whatsapp = $isWhatsapp();
+    $copy = $isCopy();
+    $print = $isPrint();
+    $mail = $isMail();
+@endphp
+
 @if($inline)
     <div class="my-4">
         <div class="mt-4 flex flex-wrap justify-center gap-4 mx-4 share-btn">
@@ -10,10 +24,10 @@
             @endif
             @if($twitter)
                 <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.twitter') }}', theme: $store.theme}"  style="background-color: #1DA1F2; color: white" class="cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="tw">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxl-twitter" class="w-5 h-5" />
-                    </div>
-                </a>
+                        <div class="flex flex-col justify-center items-center">
+                            <x-icon name="bxl-twitter" class="w-5 h-5" />
+                        </div>
+                    </a>
             @endif
             @if($reddit)
                 <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.reddit') }}', theme: $store.theme}"  style="background-color: #FF8b60; color: white" class="cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="re">
@@ -38,24 +52,24 @@
             @endif
             @if($telegram)
                 <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.telegram') }}', theme: $store.theme}" style="background-color: #24A1DE; color: white" class="cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="tg">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxl-telegram" class="w-5 h-5" />
-                    </div>
-                </a>
+                        <div class="flex flex-col justify-center items-center">
+                            <x-icon name="bxl-telegram" class="w-5 h-5" />
+                        </div>
+                    </a>
             @endif
             @if($whatsapp)
                 <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.whatsapp') }}', theme: $store.theme}" style="background-color: #075E54; color: white" class="cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="wa">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxl-whatsapp" class="w-5 h-5" />
-                    </div>
-                </a>
+                <div class="flex flex-col justify-center items-center">
+                    <x-icon name="bxl-whatsapp" class="w-5 h-5" />
+                </div>
+            </a>
             @endif
             @if($copy)
                 <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.copy') }}', theme: $store.theme}"   style="--c-400:var(--danger-400);--c-500:var(--danger-500);--c-600:var(--danger-600);" class="bg-custom-600 text-white cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="wa">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxs-copy" class="w-5 h-5" />
-                    </div>
-                </a>
+                <div class="flex flex-col justify-center items-center">
+                    <x-icon name="bxs-copy" class="w-5 h-5" />
+                </div>
+            </a>
             @endif
             @if($print)
                 <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.print') }}', theme: $store.theme}" style="--c-400:var(--info-400);--c-500:var(--info-500);--c-600:var(--info-600);" class="bg-custom-600 text-white cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="wa">
@@ -82,7 +96,7 @@
     <x-filament::dropdown>
         <x-slot name="trigger">
             <x-filament::button icon="heroicon-s-share">
-                Share
+                {{ trans('filament-social::messages.share.title') }}
             </x-filament::button>
         </x-slot>
 

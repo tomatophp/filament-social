@@ -37,6 +37,10 @@
         "mallardduck/blade-boxicons": "^2.4",
         "tomatophp/console-helpers": "^1.1",
         "laravel/socialite": "^5.15",
-        "revolution/socialite-discord": "^1.4"
+        "revolution/socialite-discord": "^1.4",
+        "socialiteproviders/facebook": "^4.1",
+        "socialiteproviders/tiktok": "^5.2",
+        "socialiteproviders/apple": "^5.6",
+        "socialiteproviders/snapchat": "*"
     }
 }

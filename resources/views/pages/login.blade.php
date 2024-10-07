@@ -22,12 +22,13 @@
         {{ trans('cms::messages.login.or') }}
     </div>
     <div class="flex justify-center gap-4">
-        <a x-tooltip="{'content': 'Login With Github', theme: $store.theme}" href="{{ route('login.provider', ['provider' => 'github']) }}">
-            <x-icon name="bxl-github" class="w-8 h-8" />
-        </a>
-        <a x-tooltip="{'content': 'Login With Discord', theme: $store.theme}" href="{{ route('login.provider', ['provider' => 'discord']) }}">
-            <x-icon name="bxl-discord" class="w-8 h-8" />
-        </a>
+        @foreach(config('filament-social.providers') as $provider)
+            @if(!empty(config('services.' . (str($provider)->contains('-') ? str($provider)->explode('-')[0] : $provider) . '.client_id')))
+                <a x-tooltip="{'content': 'Login With {{ ucfirst(str($provider)->contains('-') ? str($provider)->explode('-')[0] : $provider) }}', theme: $store.theme}" href="{{ route('login.provider', ['provider' => $provider]) . '?url=' . url()->current() }}">
+                    <x-icon name="bxl-{{ str($provider)->contains('-') ? str($provider)->explode('-')[0] : $provider }}" class="w-8 h-8" />
+                </a>
+            @endif
+        @endforeach
     </div>
 
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, scopes: $this->getRenderHookScopes()) }}

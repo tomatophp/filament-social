@@ -4,25 +4,24 @@ return [
     /*
      * Socialite Providers
      */
-    "providers" => [
-        "google",
-        "github",
-        "discord",
-        "facebook",
-        "twitter-oauth-2",
-        "snapchat",
+    'providers' => [
+        'google',
+        'github',
+        'discord',
+        'facebook',
+        'twitter-oauth-2',
+        'snapchat',
     ],
 
     /*
      * Redirect To The Following Panel After Login
      */
-    "panel" => "admin",
-
+    'panel' => 'admin',
 
     /*
      * Notification Settings
      */
-    "notification" => [
-        "discord" => true,
+    'notification' => [
+        'discord' => true,
     ],
 ];

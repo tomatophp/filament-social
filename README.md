@@ -29,6 +29,13 @@ Integration of social media platform actions and auth to your FilamentPHP panel
 - [ ] Auto Share Posts To Twitter
 - [ ] Auto Share Posts To Facebook
 
+## Version Compatibility
+
+| Plugin | Filament | Laravel | PHP |
+|--------|----------|---------|-----|
+| 1.x (`v3` branch) | 3.x | 10.x \| 11.x | 8.1+ |
+| 5.x | 5.x | 12.x \| 13.x | 8.2+ |
+
 ## Installation
 
 ```bash

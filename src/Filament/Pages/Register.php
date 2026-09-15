@@ -2,16 +2,18 @@
 
 namespace TomatoPHP\FilamentSocial\Filament\Pages;
 
-use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
-use Filament\Events\Auth\Registered;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
-use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Http;
+use Filament\Auth\Pages\Register as BaseRegister;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Schema;
 
-class Register extends \Filament\Pages\Auth\Register
+class Register extends BaseRegister
 {
-    protected static string $view = 'filament-social::pages.register';
+    public function content(Schema $schema): Schema
+    {
+        return parent::content($schema)
+            ->components([
+                ...parent::content($schema)->getComponents(),
+                View::make('filament-social::components.social-login'),
+            ]);
+    }
 }

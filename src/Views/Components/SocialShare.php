@@ -23,8 +23,7 @@ class SocialShare extends Component
         public bool $mail = false,
         public bool $copy = false,
         public bool $print = false,
-    )
-    {
+    ) {
         //
     }
 

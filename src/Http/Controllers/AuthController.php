@@ -2,38 +2,36 @@
 
 namespace TomatoPHP\FilamentSocial\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Exception;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Laravel\Socialite\Contracts\User as SocialiteUser;
 use Laravel\Socialite\Facades\Socialite;
-use TomatoPHP\FilamentAccounts\Models\AccountsMeta;
-use TomatoPHP\FilamentAlerts\Services\SendNotification;
-use TomatoPHP\FilamentDiscord\Jobs\NotifyDiscordJob;
+use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 use TomatoPHP\FilamentSocial\Events\SocialLogin;
 use TomatoPHP\FilamentSocial\Events\SocialRegister;
 
 class AuthController extends Controller
 {
-    public function provider($provider, Request $request)
+    public function provider(string $provider, Request $request): SymfonyRedirectResponse
     {
         $request->validate([
             'url' => 'required|url',
         ]);
 
-
-        $currentPanel = str($request->get('url'))->beforeLast('/')->afterLast('/');
+        $currentPanel = (string) str($request->get('url'))->beforeLast('/')->afterLast('/');
         session()->put('current_panel', $currentPanel);
 
         try {
-            return Socialite::driver($provider)
-                ->redirect();
-        }catch (\Exception $exception){
+            return Socialite::driver($provider)->redirect();
+        } catch (Exception $exception) {
             Notification::make()
                 ->title('Error')
                 ->body($exception->getMessage())
@@ -44,70 +42,57 @@ class AuthController extends Controller
         }
     }
 
-    public function callback($provider)
+    public function callback(string $provider): RedirectResponse
     {
-        $getFilamentPanel = Filament::getPanel(session('current_panel'));
+        $panel = Filament::getPanel(session('current_panel'));
 
         try {
-            $providerHasToken = config('services.'.$provider.'.client_token');
+            $providerToken = config('services.'.$provider.'.client_token');
+
             try {
-                if($providerHasToken){
-                    $socialUser = Socialite::driver($provider)->userFromToken($providerHasToken);
-                }
-                else {
-                    $socialUser = Socialite::driver($provider)->user();
-                }
-            }catch (\Exception $exception){
+                $socialUser = $providerToken
+                    ? Socialite::driver($provider)->userFromToken($providerToken)
+                    : Socialite::driver($provider)->user();
+            } catch (Exception $exception) {
                 Notification::make()
                     ->title('Oh No!')
                     ->body("You don't have any account please register first!")
                     ->danger()
                     ->send();
 
-                return redirect()->to(config('filament-social.panel') . '/register');
+                return redirect()->to(config('filament-social.panel').'/register');
             }
 
-            $getAuthModel = config('auth.providers.' . config('auth.guards.'.$getFilamentPanel->getAuthGuard().'.provider') . '.model');
-            $user = $getAuthModel::query()->whereHas('socialAuthUser', function ($query) use ($socialUser, $provider) {
-                $query->where('provider', $provider)->where('provider_id', $socialUser->id);
-            })->first();
+            $authModel = config('auth.providers.'.config('auth.guards.'.$panel->getAuthGuard().'.provider').'.model');
 
-            if(!$user){
-                $user = $getAuthModel::query()->where('email', $socialUser->email)->first();
-                if(!$user){
-                    $user = $getAuthModel::create([
-                        'email' => $socialUser->email,
-                        'name' => $socialUser->name,
-                        'password' => bcrypt(Str::random(10)),
+            $user = $authModel::query()
+                ->whereHas('socialAuthUser', function ($query) use ($socialUser, $provider) {
+                    $query->where('provider', $provider)->where('provider_id', $socialUser->getId());
+                })
+                ->first();
+
+            if ($user) {
+                $this->syncProfile($user, $socialUser);
+                $this->syncSocialAccount($user, $provider, $socialUser);
+            } else {
+                $user = $authModel::query()->where('email', $socialUser->getEmail())->first();
+
+                if ($user) {
+                    $this->syncProfile($user, $socialUser);
+                    $this->syncSocialAccount($user, $provider, $socialUser);
+
+                    Event::dispatch(new SocialLogin($user->toArray()));
+                } else {
+                    $user = $authModel::create([
+                        'email' => $socialUser->getEmail(),
+                        'name' => $socialUser->getName(),
+                        'password' => bcrypt(Str::random(32)),
                     ]);
 
-                    if(Schema::hasColumn($user->getTable(), 'username')){
-                        if(isset($socialUser->attributes['nickname'])){
-                            $id = str($socialUser->attributes['nickname'])->slug('_');
-                        }
-                        else {
-                            $id = Str::of($socialUser->name)->slug('_')->toString();
-                        }
+                    $this->syncProfile($user, $socialUser);
+                    $this->syncSocialAccount($user, $provider, $socialUser);
 
-                        $user->update([
-                            'username' => $id
-                        ]);
-                    }
-
-                    if(Schema::hasColumn($user->getTable(), 'profile_photo_path')){
-                        $user->update([
-                            'profile_photo_path' => $socialUser->avatar
-                        ]);
-                    }
-
-                    $user->socialAuthUser()->create([
-                        'provider' => $provider,
-                        'provider_id' => $socialUser->id,
-                        'data' => $socialUser
-                    ]);
-
-
-                    if(config('filament-social.notification.discord')){
+                    if (config('filament-social.notification.discord') && Notification::hasMacro('sendToDiscord')) {
                         Notification::make()
                             ->title('New User Registered')
                             ->body(collect([
@@ -119,77 +104,67 @@ class AuthController extends Controller
 
                     Event::dispatch(new SocialRegister($user->toArray()));
                 }
-                else {
-                    $user->update([
-                        'name' => $socialUser->name,
-                        'data' => $socialUser
-                    ]);
-
-                    if(Schema::hasColumn($user->getTable(), 'username')){
-                        if(isset($socialUser->attributes['nickname'])){
-                            $id = str($socialUser->attributes['nickname'])->slug('_');
-                        }
-                        else {
-                            $id = Str::of($socialUser->name)->slug('_')->toString();
-                        }
-
-                        $user->update([
-                            'username' => $id
-                        ]);
-                    }
-
-                    if(Schema::hasColumn($user->getTable(), 'profile_photo_path')){
-                        $user->update([
-                            'profile_photo_path' => $socialUser->avatar
-                        ]);
-                    }
-
-                    Event::dispatch(new SocialLogin($user->toArray()));
-                }
-            }
-            else {
-                $user->update([
-                    'name' => $socialUser->name,
-                    'data' => $socialUser
-                ]);
-
-                if(Schema::hasColumn($user->getTable(), 'username')){
-                    if(isset($socialUser->attributes['nickname'])){
-                        $id = str($socialUser->attributes['nickname'])->slug('_');
-                    }
-                    else {
-                        $id = Str::of($socialUser->name)->slug('_')->toString();
-                    }
-
-                    $user->update([
-                        'username' => $id
-                    ]);
-                }
-
-                if(Schema::hasColumn($user->getTable(), 'profile_photo_path')){
-                    $user->update([
-                        'profile_photo_path' => $socialUser->avatar
-                    ]);
-                }
             }
 
-            auth($getFilamentPanel->getAuthGuard())->login($user);
+            auth($panel->getAuthGuard())->login($user);
 
             Notification::make()
-                ->title('Welcome '. $user->name)
+                ->title('Welcome '.$user->name)
                 ->body('You have successfully logged in!')
                 ->success()
                 ->send();
 
             return redirect()->to(config('filament-social.panel'));
-        }
-        catch (\Exception $exception){
+        } catch (Exception $exception) {
+            report($exception);
+
             Notification::make()
                 ->title('Error')
                 ->body('Something went wrong!')
                 ->danger()
                 ->send();
+
             return redirect()->to(config('filament-social.panel'));
         }
+    }
+
+    protected function syncProfile(Model $user, SocialiteUser $socialUser): void
+    {
+        $attributes = ['name' => $socialUser->getName() ?: $user->name];
+
+        if (Schema::hasColumn($user->getTable(), 'username') && blank($user->username)) {
+            $username = (string) Str::of($socialUser->getNickname() ?: $socialUser->getName())->slug('_');
+
+            if ($user->newQuery()->where('username', $username)->whereKeyNot($user->getKey())->exists()) {
+                $username .= '_'.$socialUser->getId();
+            }
+
+            $attributes['username'] = $username;
+        }
+
+        if (Schema::hasColumn($user->getTable(), 'profile_photo_path') && filled($socialUser->getAvatar())) {
+            $attributes['profile_photo_path'] = $socialUser->getAvatar();
+        }
+
+        $user->forceFill($attributes)->save();
+    }
+
+    protected function syncSocialAccount(Model $user, string $provider, SocialiteUser $socialUser): void
+    {
+        $user->socialAuthUser()->updateOrCreate(
+            [
+                'provider' => $provider,
+                'provider_id' => $socialUser->getId(),
+            ],
+            [
+                'data' => [
+                    'id' => $socialUser->getId(),
+                    'nickname' => $socialUser->getNickname(),
+                    'name' => $socialUser->getName(),
+                    'email' => $socialUser->getEmail(),
+                    'avatar' => $socialUser->getAvatar(),
+                ],
+            ],
+        );
     }
 }

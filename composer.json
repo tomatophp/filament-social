@@ -15,7 +15,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "TomatoPHP\\FilamentSocial\\Tests\\": "tests/src",
+            "TomatoPHP\\FilamentSocial\\Tests\\Database\\Factories\\": "tests/database/factories"
         }
     },
     "extra": {
@@ -31,16 +32,39 @@
             "email": "info@3x1.io"
         }
     ],
+    "scripts": {
+        "testbench": "vendor/bin/testbench package:discover --ansi",
+        "db": "vendor/bin/testbench package:create-sqlite-db && vendor/bin/testbench migrate",
+        "analyse": "vendor/bin/phpstan analyse src tests",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
     "require": {
-        "php": "^8.1|^8.2",
-        "filament/filament": "^3.2",
+        "php": "^8.2",
+        "filament/filament": "^5.0",
         "mallardduck/blade-boxicons": "^2.4",
         "tomatophp/console-helpers": "^1.1",
-        "laravel/socialite": "^5.15",
-        "revolution/socialite-discord": "^1.4",
+        "laravel/socialite": "^5.20",
+        "revolution/socialite-discord": "^1.5",
         "socialiteproviders/facebook": "^4.1",
         "socialiteproviders/tiktok": "^5.2",
-        "socialiteproviders/apple": "^5.6",
-        "socialiteproviders/snapchat": "*"
-    }
+        "socialiteproviders/apple": "^5.6|^6.0",
+        "socialiteproviders/snapchat": "^4.1"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.24",
+        "orchestra/testbench": "^10.0|^11.0",
+        "pestphp/pest": "^4.0|^5.0",
+        "pestphp/pest-plugin-laravel": "^4.0|^5.0",
+        "pestphp/pest-plugin-livewire": "^4.0|^5.0"
+    },
+    "version": "5.0.0"
 }

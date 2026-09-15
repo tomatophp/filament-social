@@ -4,7 +4,6 @@ namespace TomatoPHP\FilamentSocial\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Tenant;
 
 class SocialAuthUser extends Model
 {
@@ -15,11 +14,11 @@ class SocialAuthUser extends Model
         'model_type',
         'provider',
         'provider_id',
-        'data'
+        'data',
     ];
 
     protected $casts = [
-        'data' => 'json'
+        'data' => 'json',
     ];
 
     public function model()

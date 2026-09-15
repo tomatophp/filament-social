@@ -10,9 +10,10 @@ Integration of social media platform actions and auth to your FilamentPHP panel
 
 ## Screenshots
 
-![Dark](https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/dark.png)
-![Register](https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/register.png)
-![Login](https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/register.png)
+![Login](https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/login-light.png)
+![Login Dark](https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/login-dark.png)
+![Register](https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/register-light.png)
+![Register Dark](https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/register-dark.png)
 ![Share Buttons](https://raw.githubusercontent.com/tomatophp/filament-social/master/arts/share-buttons.png)
 
 ## Features
@@ -174,6 +175,22 @@ public function actions(): array
 ```
 
 you can use the button as a dropdown or you can use it as inline icons buttons using `->inline()` method
+
+### Share a specific url
+
+by default the buttons share the current page, to share a specific record (for example a post from a table row) pass the url and title
+
+```php
+SocialShareAction::make()
+    ->facebook()
+    ->twitter()
+    ->shareUrl(fn (Post $record): string => route('posts.show', $record))
+    ->shareTitle(fn (Post $record): string => $record->title)
+```
+
+```html
+<x-filament-social-share inline facebook twitter url="{{ route('posts.show', $post) }}" title="{{ $post->title }}" />
+```
 
 
 ## Social Auth Events

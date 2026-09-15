@@ -1,79 +1,79 @@
 @if($inline)
     <div class="my-4">
-        <div class="mt-4 flex flex-wrap justify-center gap-4 mx-4 share-btn" @if(filled($shareUrl)) data-url="{{ $shareUrl }}" @endif @if(filled($shareTitle)) data-title="{{ $shareTitle }}" @endif>
+        <div class="share-btn" style="margin: 1rem 1rem 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;" @if(filled($shareUrl)) data-url="{{ $shareUrl }}" @endif @if(filled($shareTitle)) data-title="{{ $shareTitle }}" @endif>
             @if($facebook)
-                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.facebook') }}', theme: $store.theme}" style="background-color: #1e40af; color: white" class="cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="fb">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxl-facebook-square" class="w-5 h-5" />
+                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.facebook') }}', theme: $store.theme}" style="background-color: #1e40af; color: white; cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; display: flex; justify-content: center; gap: 0.5rem;" data-id="fb">
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <x-icon name="bxl-facebook-square" style="width: 1.25rem; height: 1.25rem;" />
                     </div>
                 </a>
             @endif
             @if($twitter)
-                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.twitter') }}', theme: $store.theme}"  style="background-color: #1DA1F2; color: white" class="cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="tw">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxl-twitter" class="w-5 h-5" />
+                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.twitter') }}', theme: $store.theme}"  style="background-color: #1DA1F2; color: white; cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; display: flex; justify-content: center; gap: 0.5rem;" data-id="tw">
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <x-icon name="bxl-twitter" style="width: 1.25rem; height: 1.25rem;" />
                     </div>
                 </a>
             @endif
             @if($reddit)
-                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.reddit') }}', theme: $store.theme}"  style="background-color: #FF8b60; color: white" class="cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="re">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxl-reddit" class="w-5 h-5" />
+                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.reddit') }}', theme: $store.theme}"  style="background-color: #FF8b60; color: white; cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; display: flex; justify-content: center; gap: 0.5rem;" data-id="re">
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <x-icon name="bxl-reddit" style="width: 1.25rem; height: 1.25rem;" />
                     </div>
                 </a>
             @endif
             @if($pinterest)
-                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.pinterest') }}', theme: $store.theme}"  style="background-color: #E60023; color: white" class="cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="pi">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxl-pinterest" class="w-5 h-5" />
+                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.pinterest') }}', theme: $store.theme}"  style="background-color: #E60023; color: white; cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; display: flex; justify-content: center; gap: 0.5rem;" data-id="pi">
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <x-icon name="bxl-pinterest" style="width: 1.25rem; height: 1.25rem;" />
                     </div>
                 </a>
             @endif
             @if($linkedin)
-                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.linkedin') }}', theme: $store.theme}"  style="background-color: #0077B5; color: white" class="cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="in">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxl-linkedin" class="w-5 h-5" />
+                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.linkedin') }}', theme: $store.theme}"  style="background-color: #0077B5; color: white; cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; display: flex; justify-content: center; gap: 0.5rem;" data-id="in">
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <x-icon name="bxl-linkedin" style="width: 1.25rem; height: 1.25rem;" />
                     </div>
                 </a>
             @endif
             @if($telegram)
-                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.telegram') }}', theme: $store.theme}" style="background-color: #24A1DE; color: white" class="cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="tg">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxl-telegram" class="w-5 h-5" />
+                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.telegram') }}', theme: $store.theme}" style="background-color: #24A1DE; color: white; cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; display: flex; justify-content: center; gap: 0.5rem;" data-id="tg">
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <x-icon name="bxl-telegram" style="width: 1.25rem; height: 1.25rem;" />
                     </div>
                 </a>
             @endif
             @if($whatsapp)
-                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.whatsapp') }}', theme: $store.theme}" style="background-color: #075E54; color: white" class="cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="wa">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxl-whatsapp" class="w-5 h-5" />
+                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.whatsapp') }}', theme: $store.theme}" style="background-color: #075E54; color: white; cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; display: flex; justify-content: center; gap: 0.5rem;" data-id="wa">
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <x-icon name="bxl-whatsapp" style="width: 1.25rem; height: 1.25rem;" />
                     </div>
                 </a>
             @endif
             @if($copy)
-                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.copy') }}', theme: $store.theme}"   style="--c-400:var(--danger-400);--c-500:var(--danger-500);--c-600:var(--danger-600);" class="bg-custom-600 text-white cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="wa">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxs-copy" class="w-5 h-5" />
+                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.copy') }}', theme: $store.theme}"   style="--c-400:var(--danger-400);--c-500:var(--danger-500);--c-600:var(--danger-600); background-color: var(--c-600); color: white; cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; display: flex; justify-content: center; gap: 0.5rem;" data-id="wa">
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <x-icon name="bxs-copy" style="width: 1.25rem; height: 1.25rem;" />
                     </div>
                 </a>
             @endif
             @if($print)
-                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.print') }}', theme: $store.theme}" style="--c-400:var(--info-400);--c-500:var(--info-500);--c-600:var(--info-600);" class="bg-custom-600 text-white cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="wa">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxs-printer" class="w-5 h-5" />
+                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.print') }}', theme: $store.theme}" style="--c-400:var(--info-400);--c-500:var(--info-500);--c-600:var(--info-600); background-color: var(--c-600); color: white; cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; display: flex; justify-content: center; gap: 0.5rem;" data-id="wa">
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <x-icon name="bxs-printer" style="width: 1.25rem; height: 1.25rem;" />
                     </div>
                 </a>
             @endif
             @if($mail)
-                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.mail') }}', theme: $store.theme}"  style="--c-400:var(--warning-400);--c-500:var(--warning-500);--c-600:var(--warning-600);"  class="bg-custom-600 text-white cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="wa">
-                    <div class="flex flex-col justify-center items-center">
-                        <x-icon name="bxs-envelope" class="w-5 h-5" />
+                <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.mail') }}', theme: $store.theme}"  style="--c-400:var(--warning-400);--c-500:var(--warning-500);--c-600:var(--warning-600); background-color: var(--c-600); color: white; cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; display: flex; justify-content: center; gap: 0.5rem;" data-id="wa">
+                    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <x-icon name="bxs-envelope" style="width: 1.25rem; height: 1.25rem;" />
                     </div>
                 </a>
             @endif
-            <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.share') }}', theme: $store.theme}" style="--c-400:var(--primary-400);--c-500:var(--primary-500);--c-600:var(--primary-600);" class="bg-custom-600 text-white cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="share">
-                <div class="flex flex-col justify-center items-center">
-                    <x-icon name="heroicon-s-share" class="w-5 h-5" />
+            <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.share') }}', theme: $store.theme}" style="--c-400:var(--primary-400);--c-500:var(--primary-500);--c-600:var(--primary-600); background-color: var(--c-600); color: white; cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; display: flex; justify-content: center; gap: 0.5rem;" data-id="share">
+                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                    <x-icon name="heroicon-s-share" style="width: 1.25rem; height: 1.25rem;" />
                 </div>
             </a>
         </div>

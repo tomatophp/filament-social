@@ -1,6 +1,6 @@
 @if($inline)
     <div class="my-4">
-        <div class="mt-4 flex flex-wrap justify-center gap-4 mx-4 share-btn">
+        <div class="mt-4 flex flex-wrap justify-center gap-4 mx-4 share-btn" @if(filled($shareUrl)) data-url="{{ $shareUrl }}" @endif @if(filled($shareTitle)) data-title="{{ $shareTitle }}" @endif>
             @if($facebook)
                 <a x-tooltip="{content: '{{ trans('filament-social::messages.share.networks.facebook') }}', theme: $store.theme}" style="background-color: #1e40af; color: white" class="cursor-pointer px-4 py-2 rounded-lg flex justify-center gap-2" data-id="fb">
                     <div class="flex flex-col justify-center items-center">
@@ -86,7 +86,7 @@
             </x-filament::button>
         </x-slot>
 
-        <x-filament::dropdown.list class="share-btn">
+        <x-filament::dropdown.list class="share-btn" :data-url="$shareUrl" :data-title="$shareTitle">
             @if($facebook)
                 <x-filament::dropdown.list.item class="cursor-pointer" tag="a" data-id="fb" icon="bxl-facebook-square">
                     {{ trans('filament-social::messages.share.networks.facebook') }}

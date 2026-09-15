@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'login' => [
+        'or' => 'أو سجل الدخول باستخدام',
+        'with' => 'تسجيل الدخول باستخدام :provider',
+    ],
     'share' => [
         'title' => 'مشاركة',
         'networks' => [

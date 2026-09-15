@@ -8,8 +8,12 @@ use Illuminate\View\Component;
 
 class SocialShare extends Component
 {
+    public ?string $shareUrl;
+
+    public ?string $shareTitle;
+
     /**
-     * Create a new component instance.
+     * Create a new component instance. Leave `url` empty to share the current page.
      */
     public function __construct(
         public bool $inline = false,
@@ -23,8 +27,11 @@ class SocialShare extends Component
         public bool $mail = false,
         public bool $copy = false,
         public bool $print = false,
+        ?string $url = null,
+        ?string $title = null,
     ) {
-        //
+        $this->shareUrl = $url;
+        $this->shareTitle = $title;
     }
 
     /**

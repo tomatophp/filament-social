@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'login' => [
+        'or' => 'Or login with',
+        'with' => 'Login with :provider',
+    ],
     'share' => [
         'title' => 'Share',
         'networks' => [

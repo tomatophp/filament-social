@@ -46,7 +46,7 @@ class FilamentSocialServiceProvider extends ServiceProvider
 
         // Publish Lang
         $this->publishes([
-            __DIR__.'/../resources/lang' => base_path('lang/vendor/filament-social'),
+            __DIR__.'/../resources/lang' => lang_path('vendor/filament-social'),
         ], 'filament-social-lang');
 
         // Register Routes

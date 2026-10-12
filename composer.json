@@ -2,6 +2,12 @@
     "name": "tomatophp/filament-social",
     "type": "library",
     "description": "Integration of social media platform actions and auth to your FilamentPHP panel",
+    "homepage": "https://tomatophp.com/en/plugins/filament-social",
+    "support": {
+        "issues": "https://github.com/tomatophp/filament-social/issues",
+        "source": "https://github.com/tomatophp/filament-social",
+        "docs": "https://tomatophp.com/en/plugins/filament-social"
+    },
     "keywords": [
         "php",
         "laravel",
